@@ -84,7 +84,7 @@ if search_query:
             st.write(f"**Overview:** {movie['Overview']}")
         
         current_genre = movie['genre'][0] if isinstance(movie['genre'], list) else movie['genre'].split(',')[0]
-        recommendations = df[df['genre'].str.contains(current_genre)].sample(3)
+        recommendations = df[df['genre'].apply(lambda g: current_genre in g if isinstance(g, list) else False)].sample(min(3, len(df)))
         st.write("### You might also like:")
         cols = st.columns(3)
         for i, (idx, rec) in enumerate(recommendations.iterrows()):
