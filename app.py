@@ -83,8 +83,15 @@ if search_query:
             st.write(f"**Genre:** {', '.join(movie['genre']) if isinstance(movie['genre'], list) else movie['genre']}")
             st.write(f"**Overview:** {movie['Overview']}")
         
-        current_genre = movie['genre'][0] if isinstance(movie['genre'], list) else movie['genre'].split(',')[0]
-        recommendations = df[df['genre'].apply(lambda g: current_genre in g if isinstance(g, list) else False)].sample(min(3, len(df)))
+        current_genre = (
+        movie['genre'][0]
+        if isinstance(movie['genre'], list) 
+        else movie['genre'].split(',')[0]
+        )
+        recommendations = (
+            df_exploded[df_exploded['genre'] == current_genre]
+            .drop_duplicates(subset='movie')
+            .sample(min(3, len(df_exploded))))
         st.write("### You might also like:")
         cols = st.columns(3)
         for i, (idx, rec) in enumerate(recommendations.iterrows()):
